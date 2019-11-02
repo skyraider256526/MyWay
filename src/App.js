@@ -1,9 +1,15 @@
 import React from "react";
-import logo from "./logo.svg";
+
+import { Player } from "./pages/player.page";
+
 import "./App.css";
 
 function App() {
-  return null;
+  return (
+    <div className="container-fluid">
+      <Player />
+    </div>
+  );
 }
 
 export default App;
