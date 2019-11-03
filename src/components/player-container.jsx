@@ -8,14 +8,7 @@ import { changeCurrentUrl } from "../redux/playlist.action";
 import YouTube from "react-youtube";
 
 export const PlayerContainer = ({ currentUrl, dispatch }) => {
-  const opts = {
-    // height: '390',
-    // width: '640',
-    playerVars: {
-      // https://developers.google.com/youtube/player_parameters
-      autoplay: 1
-    }
-  };
+  //this will get rendered if no url entered by user
   if (!currentUrl) {
     return (
       <div className="flex-fill text-center pt-5 border border-success">
@@ -23,13 +16,25 @@ export const PlayerContainer = ({ currentUrl, dispatch }) => {
       </div>
     );
   }
+  const opts = {
+    playerVars: {
+      autoplay: 1
+    }
+  };
+  let url = currentUrl.match(/\?v=(.*\w*)|.be\/(\w*)/);
+  if (url.pop() === undefined) {
+    url = url[1];
+  } else {
+    //the url contain .be format of youtube url
+    url = currentUrl.match(/\?v=(\w*)|.be\/(.*\w*)/).pop();
+    console.log("url if .be/", url);
+  }
   return (
     <div className="flex-fill">
       <YouTube
-        videoId={currentUrl.match(/\?v=(\w*)/).pop()}
+        videoId={url}
         opts={opts}
         onReady={event => event.target.playVideo()}
-        //once the video is ended the event is triggered to change the current video in state
         onEnd={event => {
           console.log(event, "finished", event);
           dispatch(changeCurrentUrl());
@@ -43,5 +48,4 @@ const mapStateToProps = state => ({
   currentUrl: selectCurrentUrl(state)
 });
 
-// const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps)(PlayerContainer);
